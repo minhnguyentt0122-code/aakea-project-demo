@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0"
+  id="Definitions_Styled"
+  targetNamespace="http://example.com/bpmn">
+
+  <bpmn:process id="CustomerPurchaseStyled" isExecutable="false">
+
+    <!-- Lanes -->
+    <bpmn:laneSet id="LaneSet_1">
+
+      <bpmn:lane id="Lane_Customer" name="Customer">
+        <bpmn:flowNodeRef>StartEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Browse</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>AddToCart</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Checkout</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EnterShipping</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SelectDelivery</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EnterPayment</bpmn:flowNodeRef>
+      </bpmn:lane>
+
+      <bpmn:lane id="Lane_FE" name="Frontend">
+        <bpmn:flowNodeRef>DisplayCheckout</bpmn:flowNodeRef>
+      </bpmn:lane>
+
+      <bpmn:lane id="Lane_BE" name="Backend API">
+        <bpmn:flowNodeRef>ValidateSession</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateGuestSession</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateHold</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreatePaymentIntent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ConfirmPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateOrder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ReleaseHold</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SendConfirmation</bpmn:flowNodeRef>
+      </bpmn:lane>
+
+      <bpmn:lane id="Lane_Stripe" name="Stripe">
+        <bpmn:flowNodeRef>ProcessPayment</bpmn:flowNodeRef>
+      </bpmn:lane>
+
+    </bpmn:laneSet>
+
+    <!-- Events -->
+    <bpmn:startEvent id="StartEvent" name="Visit Store"/>
+    <bpmn:endEvent id="EndSuccess" name="Order Completed"/>
+    <bpmn:endEvent id="EndFail" name="Payment Failed"/>
+
+    <!-- Tasks -->
+    <bpmn:task id="Browse" name="Browse Products"/>
+    <bpmn:task id="AddToCart" name="Add to Cart"/>
+    <bpmn:task id="Checkout" name="Checkout"/>
+    <bpmn:task id="ValidateSession" name="Validate Session"/>
+    <bpmn:task id="CreateGuestSession" name="Create Guest Session"/>
+    <bpmn:task id="CreateHold" name="Inventory Hold (15m)"/>
+    <bpmn:task id="DisplayCheckout" name="Display Checkout + Timer"/>
+    <bpmn:task id="EnterShipping" name="Enter Shipping"/>
+    <bpmn:task id="SelectDelivery" name="Select Delivery"/>
+    <bpmn:task id="CreatePaymentIntent" name="Create PaymentIntent"/>
+    <bpmn:task id="EnterPayment" name="Enter Payment"/>
+    <bpmn:task id="ConfirmPayment" name="Confirm Payment"/>
+    <bpmn:task id="ProcessPayment" name="Process Payment"/>
+    <bpmn:task id="CreateOrder" name="Create Order"/>
+    <bpmn:task id="ReleaseHold" name="Release Hold"/>
+    <bpmn:task id="SendConfirmation" name="Send Confirmation"/>
+
+    <!-- Gateways -->
+    <bpmn:exclusiveGateway id="AuthGW" name="Authenticated?"/>
+    <bpmn:exclusiveGateway id="PaymentGW" name="Payment OK?"/>
+
+    <!-- Flow -->
+    <bpmn:sequenceFlow id="f1" sourceRef="StartEvent" targetRef="Browse"/>
+    <bpmn:sequenceFlow id="f2" sourceRef="Browse" targetRef="AddToCart"/>
+    <bpmn:sequenceFlow id="f3" sourceRef="AddToCart" targetRef="Checkout"/>
+    <bpmn:sequenceFlow id="f4" sourceRef="Checkout" targetRef="ValidateSession"/>
+    <bpmn:sequenceFlow id="f5" sourceRef="ValidateSession" targetRef="AuthGW"/>
+    <bpmn:sequenceFlow id="f6" sourceRef="AuthGW" targetRef="CreateHold" name="Yes"/>
+    <bpmn:sequenceFlow id="f7" sourceRef="AuthGW" targetRef="CreateGuestSession" name="No"/>
+    <bpmn:sequenceFlow id="f8" sourceRef="CreateGuestSession" targetRef="CreateHold"/>
+    <bpmn:sequenceFlow id="f9" sourceRef="CreateHold" targetRef="DisplayCheckout"/>
+    <bpmn:sequenceFlow id="f10" sourceRef="DisplayCheckout" targetRef="EnterShipping"/>
+    <bpmn:sequenceFlow id="f11" sourceRef="EnterShipping" targetRef="SelectDelivery"/>
+    <bpmn:sequenceFlow id="f12" sourceRef="SelectDelivery" targetRef="CreatePaymentIntent"/>
+    <bpmn:sequenceFlow id="f13" sourceRef="CreatePaymentIntent" targetRef="EnterPayment"/>
+    <bpmn:sequenceFlow id="f14" sourceRef="EnterPayment" targetRef="ConfirmPayment"/>
+    <bpmn:sequenceFlow id="f15" sourceRef="ConfirmPayment" targetRef="ProcessPayment"/>
+    <bpmn:sequenceFlow id="f16" sourceRef="ProcessPayment" targetRef="PaymentGW"/>
+    <bpmn:sequenceFlow id="f17" sourceRef="PaymentGW" targetRef="CreateOrder" name="Yes"/>
+    <bpmn:sequenceFlow id="f18" sourceRef="PaymentGW" targetRef="EndFail" name="No"/>
+    <bpmn:sequenceFlow id="f19" sourceRef="CreateOrder" targetRef="ReleaseHold"/>
+    <bpmn:sequenceFlow id="f20" sourceRef="ReleaseHold" targetRef="SendConfirmation"/>
+    <bpmn:sequenceFlow id="f21" sourceRef="SendConfirmation" targetRef="EndSuccess"/>
+
+  </bpmn:process>
+
+  <!-- Diagram Layout -->
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="CustomerPurchaseStyled">
+
+      <!-- Start -->
+      <bpmndi:BPMNShape bpmnElement="StartEvent">
+        <dc:Bounds x="50" y="150" width="36" height="36"/>
+        <bioc:fill>#A5D6A7</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <!-- Tasks (sample positions) -->
+      <bpmndi:BPMNShape bpmnElement="Browse">
+        <dc:Bounds x="120" y="140" width="100" height="60"/>
+        <bioc:fill>#E3F2FD</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape bpmnElement="AddToCart">
+        <dc:Bounds x="240" y="140" width="100" height="60"/>
+        <bioc:fill>#E3F2FD</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape bpmnElement="Checkout">
+        <dc:Bounds x="360" y="140" width="100" height="60"/>
+        <bioc:fill>#FFF9C4</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape bpmnElement="ValidateSession">
+        <dc:Bounds x="480" y="140" width="120" height="60"/>
+        <bioc:fill>#E1BEE7</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape bpmnElement="AuthGW">
+        <dc:Bounds x="620" y="150" width="50" height="50"/>
+        <bioc:fill>#FFE082</bioc:fill>
+      </bpmndi:BPMNShape>
+
+      <!-- End -->
+      <bpmndi:BPMNShape bpmnElement="EndSuccess">
+        <dc:Bounds x="1200" y="150" width="36" height="36"/>
+        <bioc:fill>#81C784</bioc:fill>
+      </bpmndi:BPMNShape>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>
