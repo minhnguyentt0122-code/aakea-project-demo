@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             targetNamespace="http://example.com/bpmn">
+
+  <!-- Collaboration with Pools -->
+  <collaboration id="Collab_1">
+    <participant id="CustomerPool" processRef="CustomerProcess" name="Customer"/>
+    <participant id="SystemPool" processRef="SystemProcess" name="System"/>
+    <participant id="PaymentPool" processRef="PaymentProcess" name="Payment Gateway"/>
+
+    <!-- Message Flows -->
+    <messageFlow id="msg1" sourceRef="SendPaymentRequest" targetRef="ReceivePaymentRequest"/>
+    <messageFlow id="msg2" sourceRef="SendPaymentResult" targetRef="ReceivePaymentResult"/>
+  </collaboration>
+
+  <!-- Customer Process -->
+  <process id="CustomerProcess" isExecutable="false">
+    <startEvent id="StartCustomer" name="Start"/>
+    <task id="Browse" name="Browse Products"/>
+    <task id="AddCart" name="Add to Cart"/>
+    <task id="Checkout" name="Checkout"/>
+    <task id="EnterDetails" name="Enter Details"/>
+    <task id="ConfirmOrder" name="Confirm Order"/>
+    <endEvent id="EndCustomer" name="Await Payment Result"/>
+
+    <sequenceFlow id="c1" sourceRef="StartCustomer" targetRef="Browse"/>
+    <sequenceFlow id="c2" sourceRef="Browse" targetRef="AddCart"/>
+    <sequenceFlow id="c3" sourceRef="AddCart" targetRef="Checkout"/>
+    <sequenceFlow id="c4" sourceRef="Checkout" targetRef="EnterDetails"/>
+    <sequenceFlow id="c5" sourceRef="EnterDetails" targetRef="ConfirmOrder"/>
+    <sequenceFlow id="c6" sourceRef="ConfirmOrder" targetRef="EndCustomer"/>
+  </process>
+
+  <!-- System Process -->
+  <process id="SystemProcess" isExecutable="false">
+    <startEvent id="StartSystem" name="Order Initiated"/>
+    <task id="Validate" name="Validate Details"/>
+    <task id="Calculate" name="Calculate Total"/>
+    <task id="LockInventory" name="Lock Inventory"/>
+
+    <!-- Timer Boundary Event -->
+    <boundaryEvent id="TimerEvent" attachedToRef="LockInventory" cancelActivity="true">
+      <timerEventDefinition/>
+    </boundaryEvent>
+
+    <task id="SendPaymentRequest" name="Send Payment Request"/>
+    <task id="ReceivePaymentResult" name="Receive Payment Result"/>
+
+    <exclusiveGateway id="Gateway" name="Payment Success?"/>
+
+    <task id="CreateOrder" name="Create Order"/>
+    <task id="ReleaseInventory" name="Release Inventory"/>
+    <task id="SendConfirmation" name="Send Confirmation"/>
+
+    <endEvent id="EndSuccess" name="Order Completed"/>
+    <endEvent id="EndFail" name="Payment Failed"/>
+    <endEvent id="EndTimeout" name="Session Expired"/>
+
+    <sequenceFlow id="s1" sourceRef="StartSystem" targetRef="Validate"/>
+    <sequenceFlow id="s2" sourceRef="Validate" targetRef="Calculate"/>
+    <sequenceFlow id="s3" sourceRef="Calculate" targetRef="LockInventory"/>
+    <sequenceFlow id="s4" sourceRef="LockInventory" targetRef="SendPaymentRequest"/>
+    <sequenceFlow id="s5" sourceRef="SendPaymentRequest" targetRef="ReceivePaymentResult"/>
+    <sequenceFlow id="s6" sourceRef="ReceivePaymentResult" targetRef="Gateway"/>
+
+    <sequenceFlow id="s7" sourceRef="Gateway" targetRef="CreateOrder">
+      <conditionExpression xsi:type="tFormalExpression">success</conditionExpression>
+    </sequenceFlow>
+
+    <sequenceFlow id="s8" sourceRef="Gateway" targetRef="ReleaseInventory">
+      <conditionExpression xsi:type="tFormalExpression">failure</conditionExpression>
+    </sequenceFlow>
+
+    <sequenceFlow id="s9" sourceRef="CreateOrder" targetRef="SendConfirmation"/>
+    <sequenceFlow id="s10" sourceRef="SendConfirmation" targetRef="EndSuccess"/>
+    <sequenceFlow id="s11" sourceRef="ReleaseInventory" targetRef="EndFail"/>
+
+    <sequenceFlow id="s12" sourceRef="TimerEvent" targetRef="EndTimeout"/>
+  </process>
+
+  <!-- Payment Process -->
+  <process id="PaymentProcess" isExecutable="false">
+    <startEvent id="StartPayment" name="Receive Request"/>
+    <task id="ReceivePaymentRequest" name="Receive Payment Request"/>
+    <task id="ProcessPayment" name="Process Payment"/>
+    <task id="SendPaymentResult" name="Send Payment Result"/>
+    <endEvent id="EndPayment" name="Done"/>
+
+    <sequenceFlow id="p1" sourceRef="StartPayment" targetRef="ReceivePaymentRequest"/>
+    <sequenceFlow id="p2" sourceRef="ReceivePaymentRequest" targetRef="ProcessPayment"/>
+    <sequenceFlow id="p3" sourceRef="ProcessPayment" targetRef="SendPaymentResult"/>
+    <sequenceFlow id="p4" sourceRef="SendPaymentResult" targetRef="EndPayment"/>
+  </process>
+
+</definitions>
