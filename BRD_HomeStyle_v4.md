@@ -24,7 +24,7 @@ Target Market: United States & Europe
 | 1.0 | Apr 2026 | Initial Draft | PO / BA |
 | 2.0 | Apr 2026 | Full revision: GDPR gaps, Returns flow, Guest Checkout decision, Currency model, Phase roadmap, Shopify platform incorporated | PO / BA |
 | 3.0 | Apr 2026 | Platform changed from Shopify to custom-built web application. Tech stack section added. All platform-specific references replaced. | PO / BA |
-| 4.0 | Apr 2026 | Time constraints and validation rules fully integrated throughout document. New Section 17 added (Time Constraints Reference). Auth, cart, checkout, orders, returns, reviews, compliance, and NFR sections updated with 38 time-based requirements (TC-01 to TC-38). BPMN timer annotations added in Section 9\. | PO / BA |
+| 4.0 | Apr 2026 | Time constraints and validation rules fully integrated throughout document. New Section 17 added (Time Constraints Reference). Auth, cart, checkout, orders, returns, reviews, compliance, and NFR sections updated with 38 time-based requirements (TC-01 to TC-38). | PO / BA |
 
 *Change Control: All post-approval changes must be submitted via a Change Request (CR) form, reviewed by the Project Sponsor, and versioned incrementally. No scope changes take effect without written approval.*
 
