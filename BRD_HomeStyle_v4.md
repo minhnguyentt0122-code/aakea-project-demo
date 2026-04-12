@@ -418,8 +418,6 @@ The following assets must be provided by the client to the development team. Lat
 
 ### **12.1 Customer Purchase Journey (To-Be — with Timer Events)**
 
-Timer events are shown in brackets as BPMN Intermediate Timer Event annotations. See Section 17 for full constraint definitions and BPMN diagram notes.
-
 | \# | Stage | Process Detail \+ Time Constraints |
 | :---- | :---- | :---- |
 | 1 | Discovery | Customer arrives via organic search, paid ad, or direct URL. Next.js serves SSR product/category pages for SEO. |
@@ -702,25 +700,6 @@ This section defines all time-based constraints for the HomeStyle platform. Thes
 | TC-37 | CCPA opt-out effect | Immediate (same page load) | No (legal requirement) | Tracking pixels (GA4, Meta Pixel) disabled within same page load on opt-out. |
 | TC-38 | Marketing unsubscribe processing | Within 10 business days | No (legal maximum) | Suppression list maintained. Email address blocked from re-addition. |
 
-### **17.7 BPMN Timer Annotation Reference**
-
-The following maps each TC to its BPMN 2.0 element type for use in the process diagrams (Section 12 and standalone BPMN documentation).
-
-| TC Ref | BPMN Element | Process Diagram | Annotation |
-| :---- | :---- | :---- | :---- |
-| TC-06 | Intermediate Timer Catch Event | Customer Purchase Journey | Between 'Registration' and 'Verification complete' — 24h link expiry |
-| TC-12 | Non-interrupting Boundary Timer | Customer Purchase Journey | On 'Store session cart' task — 30-day Redis TTL |
-| TC-13 | Interrupting Boundary Timer | Customer Purchase Journey | On 'Checkout — Address' task — 15-min hold with countdown; releases hold on timeout |
-| TC-14 | Interrupting Boundary Timer | Customer Purchase Journey | On entire checkout subprocess — 30-min hard expiry |
-| TC-15 | Interrupting Boundary Timer | Customer Purchase Journey | On 'Create PaymentIntent' task — 30s API timeout |
-| TC-17 | Escalation Boundary Timer | Admin Order Fulfillment | On 'Review order' admin task — 4 biz hrs → escalate to Super Admin |
-| TC-18 | Escalation Boundary Timer | Admin Order Fulfillment | On 'Pack order' admin task — 48 biz hrs → SLA breach flag |
-| TC-24 | Intermediate Timer Catch Event | Admin Order Fulfillment | After 'Status → Delivered' — 7-day delay → review prompt email |
-| TC-19 | Non-interrupting Boundary Timer | Returns & Exchange | On 'Order delivered' start event — 30-day window → gateway closes |
-| TC-20 | Intermediate Timer Catch Event | Returns & Exchange | After 'Return Approved' — 14-day ship-back deadline → admin alert |
-| TC-21 | Escalation Boundary Timer | Returns & Exchange | On 'Review request' admin task — 2 biz days → overdue alert |
-| TC-22 | Escalation Boundary Timer | Returns & Exchange | On 'Confirm receipt' admin task — 1 biz day → refund-due alert |
-| TC-30 | Non-interrupting Boundary Timer | Returns & Exchange | On 'Issue refund' system task — 24h → admin alert if webhook absent |
 
 # **18\. Domain-Specific Considerations**
 
