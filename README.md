@@ -1,5 +1,4 @@
-# 🛋️ E-commerce Furniture System (BA Portfolio Project)
-
+# 🛋️ E-commerce Furniture System
 ## 📌 Overview
 
 This project is a **Business Analysis & Product Design portfolio** for an **e-commerce furniture platform** targeting the **US–Europe market**.
